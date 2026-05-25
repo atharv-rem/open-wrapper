@@ -1,6 +1,6 @@
 {
   "name": "atharv-ai",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Atharv Remeshan",
   "description": "Local AI Desktop App",
   "main": "main.js",

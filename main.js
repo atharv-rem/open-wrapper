@@ -8,14 +8,14 @@ let splash;
 function createSplashScreen() {
 
   splash = new BrowserWindow({
-    width: 760,
-    height: 440,
-    frame: false,
+    width: 500,
+    height: 500,
     alwaysOnTop: true,
     resizable: false,
     movable: true,
     center: true,
     backgroundColor: "#000000",
+    title: "Atharv AI",
 
     webPreferences: {
       nodeIntegration: true,
@@ -75,7 +75,22 @@ body {
   padding: 16px;
   font-size: 13px;
   line-height: 1.45;
-  overflow: hidden;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scroll-behavior: smooth;
+
+  /* Hide scrollbar - Firefox */
+  scrollbar-width: none;
+
+  /* Hide scrollbar - IE/Edge */
+  -ms-overflow-style: none;
+}
+
+/* Hide scrollbar - Chrome/Safari */
+.terminal::-webkit-scrollbar {
+  display: none;
 }
 
 .line {
