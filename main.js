@@ -362,15 +362,40 @@ function startDocker() {
 
 function pullModel() {
 
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
 
     exec(
-      "docker exec ollama ollama pull qwen2.5:3b",
-      (error, stdout, stderr) => {
+      "docker exec ollama ollama list",
+      (error, stdout) => {
 
-        console.log(stdout);
+        if (error) {
+          reject(error);
+          return;
+        }
 
-        resolve();
+        // Model already exists
+        if (stdout.includes("qwen2.5:3b")) {
+
+          addSplashLog("> Model already cached locally", "success");
+
+          resolve();
+          return;
+        }
+
+        addSplashLog("> Downloading qwen2.5:3b model...", "info");
+
+        exec(
+          "docker exec ollama ollama pull qwen2.5:3b",
+          (pullError) => {
+
+            if (pullError) {
+              reject(pullError);
+              return;
+            }
+
+            resolve();
+          }
+        );
       }
     );
 
@@ -396,14 +421,6 @@ async function launchApp() {
     addSplashLog("> Open WebUI container started", "success");
     addSplashLog("> Ollama container started", "success");
 
-    updateSplashStatus("Downloading AI model if required...");
-
-    addSplashLog("> Checking local model cache", "dim");
-
-    await pullModel();
-
-    addSplashLog("> qwen2.5:3b model ready", "success");
-
     updateSplashStatus("Waiting for Open WebUI server...");
 
     addSplashLog("> Booting inference runtime", "dim");
@@ -412,6 +429,20 @@ async function launchApp() {
       resources: ["http://localhost:3000"],
       timeout: 120000,
     });
+
+    addSplashLog("> Open WebUI server online", "success");
+
+    updateSplashStatus("Checking AI model cache...");
+
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    addSplashLog("> Verifying qwen2.5:3b model", "dim");
+
+    updateSplashStatus("Downloading AI model if required...");
+
+    await pullModel();
+
+    addSplashLog("> qwen2.5:3b model ready", "success");
 
     addSplashLog("> Open WebUI server online", "success");
 
@@ -442,7 +473,7 @@ async function launchApp() {
 
     dialog.showErrorBox(
       "Docker Not Found",
-      "Docker Desktop is required to run Atharv AI."
+      "Docker Desktop is required to run AI."
     );
 
     app.quit();
