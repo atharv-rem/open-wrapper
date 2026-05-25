@@ -1,0 +1,31 @@
+{
+  "name": "atharv-ai",
+  "version": "1.0.0",
+  "description": "Local AI Desktop App",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^35.7.5",
+    "electron-builder": "^26.8.1"
+  },
+  "build": {
+    "appId": "com.atharv.ai",
+    "productName": "Atharv AI",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*"
+    ],
+    "win": {
+      "target": "msi",
+      "icon": "assets/icon.ico"
+    }
+  },
+  "dependencies": {
+    "wait-on": "^9.0.10"
+  }
+}

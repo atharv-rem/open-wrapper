@@ -1,0 +1,9 @@
+node_modules
+dist
+models
+*.gguf
+*.exe
+*.msi
+*.zip
+*.tar
+*.tar.gz
