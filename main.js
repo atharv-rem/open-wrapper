@@ -360,6 +360,63 @@ function startDocker() {
   });
 }
 
+function waitForDocker() {
+
+  return new Promise((resolve) => {
+
+    let hasShownWaitingState = false;
+
+    const interval = setInterval(() => {
+
+      exec("docker info", (error) => {
+
+        // Docker NOT running
+        if (error) {
+
+          if (!hasShownWaitingState) {
+
+            updateSplashStatus(
+              "[ERROR] Docker daemon unavailable",
+              "error"
+            );
+
+            addSplashLog(
+              "> Waiting for Docker Desktop...",
+              "warning"
+            );
+
+            addSplashLog(
+              "> Start Docker Desktop to continue",
+              "dim"
+            );
+
+            hasShownWaitingState = true;
+          }
+
+          return;
+        }
+
+        // Docker running again
+        clearInterval(interval);
+
+        updateSplashStatus(
+          "Docker environment detected",
+          "success"
+        );
+
+        addSplashLog(
+          "> Docker Desktop connected",
+          "success"
+        );
+
+        resolve();
+      });
+
+    }, 2000);
+
+  });
+}
+
 function pullModel() {
 
   return new Promise((resolve, reject) => {
@@ -407,19 +464,20 @@ async function launchApp() {
   createSplashScreen();
 
   try {
-
     updateSplashStatus("Checking Docker environment...");
-
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await waitForDocker();
 
     addSplashLog("> Docker environment detected", "success");
 
     updateSplashStatus("Starting Docker containers...");
 
+    addSplashLog("> Downloading Open WebUI container if required", "dim");
+    addSplashLog("> Downloading Ollama container if required", "dim");
+
     await startDocker();
 
-    addSplashLog("> Open WebUI container started", "success");
-    addSplashLog("> Ollama container started", "success");
+    addSplashLog("> Open WebUI container ready", "success");
+    addSplashLog("> Ollama container ready", "success");
 
     updateSplashStatus("Waiting for Open WebUI server...");
 
@@ -444,39 +502,25 @@ async function launchApp() {
 
     addSplashLog("> qwen2.5:3b model ready", "success");
 
-    addSplashLog("> Open WebUI server online", "success");
-
     updateSplashStatus("Launching desktop interface...", "success");
 
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     createMainWindow();
 
   } catch (error) {
-
     console.error(error);
 
     updateSplashStatus(
-      "Docker environment not found",
+      "[ERROR] Failed to launch runtime",
       "error"
     );
 
     addSplashLog(
-      "> Failed to start Docker Desktop",
+      "> Unexpected startup failure",
       "error"
     );
-
-    addSplashLog(
-      "> Please install or start Docker Desktop",
-      "warning"
-    );
-
-    dialog.showErrorBox(
-      "Docker Not Found",
-      "Docker Desktop is required to run AI."
-    );
-
-    app.quit();
+    
   }
 }
 
