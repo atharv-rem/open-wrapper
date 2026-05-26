@@ -10,10 +10,13 @@
     "dist": "electron-builder"
   },
 
+  "dependencies": {
+    "wait-on": "^8.0.0"
+  },
+
   "devDependencies": {
     "electron": "^35.7.5",
-    "electron-builder": "^26.8.1",
-    "wait-on": "^8.0.0"
+    "electron-builder": "^26.8.1"
   },
 
   "build": {
@@ -29,6 +32,8 @@
       "**/*",
       "!node_modules/.cache/**/*"
     ],
+
+    "asar": true,
 
     "win": {
       "target": "msi",
