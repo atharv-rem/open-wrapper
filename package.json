@@ -1,43 +1,46 @@
 {
   "name": "atharv-ai",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Atharv Remeshan",
   "description": "Local AI Desktop App",
   "main": "main.js",
-
   "scripts": {
     "start": "electron .",
     "dist": "electron-builder"
   },
-
-  "dependencies": {
-    "wait-on": "^8.0.0"
-  },
-
   "devDependencies": {
     "electron": "^35.7.5",
     "electron-builder": "^26.8.1"
   },
-
   "build": {
     "appId": "com.atharv.ai",
-
     "productName": "Atharv AI",
-
     "directories": {
       "output": "dist"
     },
-
     "files": [
       "**/*",
-      "!node_modules/.cache/**/*"
+      "!node_modules/.cache/**/*",
+      "!docker-compose.yml"
     ],
-
+    "extraFiles": [
+      {
+        "from": "docker-compose.yml",
+        "to": "."
+      }
+    ],
     "asar": true,
-
     "win": {
-      "target": "msi",
+      "target": [
+        "msi"
+      ],
       "icon": "assets/icon.ico"
+    },
+    "msi": {
+      "oneClick": true,
+      "perMachine": false,
+      "runAfterFinish": true,
+      "shortcutName": "Atharv AI"
     }
   }
 }
